@@ -1,0 +1,4 @@
+hello
+banan
+tanaka
+bye
