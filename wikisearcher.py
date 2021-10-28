@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 
 
-PARENT_DIR = os.getcwd()
+PARENT_DIR = os.getcwd() # currently this needs to be 
 
 ERR_DIR = "Not Found"
 ERR_PATH = os.path.join(PARENT_DIR, ERR_DIR)
@@ -73,15 +73,15 @@ def give_definition(term_name):
             end_paren = definition.find(")")
             definition = definition.replace(definition[start_paren:end_paren+1], "") 
             definition = definition [:start_paren] + " " + definition[start_paren:]
-        print("Found", end=" | ")
+        print("      Found", end=" | ")
         definition = definition.replace("  ", "").replace(" ,", ",").replace(" .", ". ").replace(".", ". ").replace(".  ", ". ").replace("\n", "")
         return definition
     except:
-        print("Not Found", end=" | ")
+        print("  Not Found", end=" | ")
         return -1
  
 
-def list_definition(term_list, savefile):
+def list_definition(term_list, savefile, error_file):
     vocab_dict = {}
     missing = []
     for term in term_list:
@@ -93,23 +93,29 @@ def list_definition(term_list, savefile):
 
     if len(missing) > 0:
         print(f"\n\n{len(missing)} terms could not be found.")
-        filename = savefile.replace(savefile[savefile.rfind("."):], "") + "{:05d}".format(random.randint(0, 99999)) + "-" + datetime.now().strftime("%m%d") + ".txt"
-        f = open(os.path.join(ERR_PATH, filename), "w")
+        f = open(os.path.join(ERR_PATH, error_file), "w")
         for term in missing:
             f.write(term + "\n")
         f.close()
-        print(f"Missing terms have been written to: {os.path.join(ERR_DIR, filename)}")
+        print(f"Missing terms have been written to: {os.path.join(ERR_DIR, error_file)}")
     return vocab_dict
  
 
-def write_to_file(filename, dictionary):
+def write_to_file(filename, dictionary, error_file):
     print(f"Writing {len(dictionary.keys())} items to file: {os.path.join(LOAD_DIR, filename)}")
     terms = list(dictionary.keys())
     definitions = list(dictionary.values())
     
     f = open(os.path.join(OUTPUT_PATH, filename), "w") 
     for i in range(len(dictionary)):
-        f.write(terms[i] + ": " + definitions[i] + "\n\n")
+        definitions[i] = ascii(definitions[i])
+        try:
+            f.write(terms[i] + ": " + definitions[i] + "\n\n")
+        except:
+            print(f"ERROR WRITING '{definitions[i]}'; adding to {error_file}.")
+            f2 = open(os.path.join(ERR_PATH, error_file), "a")
+            f2.write(definitions[i] + "\n")
+            f2.close()
     f.close()
     print(f"Finished writing.")
  
@@ -181,9 +187,10 @@ def main():
                 quit()
             except:
                 print_file_error()
-        terms_and_def = list_definition(terms, savefile)
+        err_file = filename = savefile.replace(savefile[savefile.rfind("."):], "") + "{:05d}".format(random.randint(0, 99999)) + "-" + datetime.now().strftime("%m%d") + ".txt"
+        terms_and_def = list_definition(terms, savefile, err_file)
         print()
-        write_to_file(savefile, terms_and_def)
+        write_to_file(savefile, terms_and_def, err_file)
         print()
         user_input = input("Press enter to continue. ")
         if user_input.lower() == "x":
