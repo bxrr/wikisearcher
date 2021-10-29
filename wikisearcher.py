@@ -1,10 +1,11 @@
 import wikipedia
 import random
 import os
+from mtranslate import translate
 from datetime import datetime
 
 
-PARENT_DIR = os.getcwd() # currently this needs to be 
+PARENT_DIR = os.getcwd() # this only works when run as a .py file, not as an .exe
 
 ERR_DIR = "Not Found"
 ERR_PATH = os.path.join(PARENT_DIR, ERR_DIR)
@@ -30,6 +31,13 @@ try:
 except:
     pass
 
+def paraphrase(text):
+    text = translate(text, "zh-cn", "auto")
+    text = translate(text, "de", "auto")
+    text = translate(text, "it", "auto")
+    text = translate(text, "fr", "auto")
+    text = translate(text, "en", "auto")
+    return text
  
 def get_indexes(filename):
     print()
@@ -73,11 +81,12 @@ def give_definition(term_name):
             end_paren = definition.find(")")
             definition = definition.replace(definition[start_paren:end_paren+1], "") 
             definition = definition [:start_paren] + " " + definition[start_paren:]
-        print("      Found", end=" | ")
+        print(" |     Found", end=" | ")
         definition = definition.replace("  ", "").replace(" ,", ",").replace(" .", ". ").replace(".", ". ").replace(".  ", ". ").replace("\n", "")
+        definition = paraphrase(definition)
         return definition
     except:
-        print("  Not Found", end=" | ")
+        print(" | Not Found", end=" | ")
         return -1
  
 
