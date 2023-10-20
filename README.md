@@ -1,5 +1,8 @@
 # wikisearcher
-Searches wikipedia and creates vocabulary lists requested.
-This is currently a WIP and is not finished. (9/22/2021)
+Pulls basic summary definitions from wikipedia and paraphrases them multiple times through multiple google translate pass throughs to create a vocabulary list of definitions given a lsit of terms. 
 
-As of now, it's in a functional version, but I haven't bothered fixing multiple bugs, and it needs a lot of polishing. I may come back and fix it whenever I get the motivation.
+Currently in an unrefined state. Look at terms_example.txt in the load directory for an example input file.
+
+Requires:
+pip install wikipedia
+pip install mtranslate

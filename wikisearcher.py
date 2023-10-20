@@ -9,13 +9,13 @@ import trimfile
 
 PARENT_DIR = os.getcwd() # this only works when run as a .py file, not as an .exe
 
-ERR_DIR = "Not Found"
+ERR_DIR = "notfound"
 ERR_PATH = os.path.join(PARENT_DIR, ERR_DIR)
 
-LOAD_DIR = "Load Files"
+LOAD_DIR = "load"
 LOAD_PATH = os.path.join(PARENT_DIR, LOAD_DIR)
 
-OUTPUT_DIR = "Output"
+OUTPUT_DIR = "output"
 OUTPUT_PATH = os.path.join(PARENT_DIR, OUTPUT_DIR)
 
 try:
