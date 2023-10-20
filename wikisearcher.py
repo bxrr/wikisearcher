@@ -1,9 +1,11 @@
+# requires pip installs for wikipedia and mtranslate
 import wikipedia
+from mtranslate import translate
+
 import random
 import os
-from mtranslate import translate
 from datetime import datetime
-
+import trimfile
 
 PARENT_DIR = os.getcwd() # this only works when run as a .py file, not as an .exe
 
@@ -60,7 +62,7 @@ def get_indexes(filename):
 def read_indexes(filename):
     print()
     print(f"Reading {filename}")
-    f = open(filename, "r")
+    f = open(os.path.join(OUTPUT_PATH, filename), "r")
     terms = []
     for line in f:
         line = line.encode("ascii", "ignore")
@@ -81,8 +83,8 @@ def give_definition(term_name):
             end_paren = definition.find(")")
             definition = definition.replace(definition[start_paren:end_paren+1], "") 
             definition = definition [:start_paren] + " " + definition[start_paren:]
-        print(" |     Found", end=" | ")
-        definition = definition.replace("  ", "").replace(" ,", ",").replace(" .", ". ").replace(".", ". ").replace(".  ", ". ").replace("\n", "")
+        print(" |   Found  ", end=" | ")
+        definition = definition.replace(" ,", ",").replace(" .", ". ").replace(".", ". ").replace(".  ", ". ").replace("\n", "").replace("  ", "")
         definition = paraphrase(definition)
         return definition
     except:
@@ -111,7 +113,7 @@ def list_definition(term_list, savefile, error_file):
  
 
 def write_to_file(filename, dictionary, error_file):
-    print(f"Writing {len(dictionary.keys())} items to file: {os.path.join(LOAD_DIR, filename)}")
+    print(f"Writing {len(dictionary.keys())} items to file: {os.path.join(OUTPUT_DIR, filename)}")
     terms = list(dictionary.keys())
     definitions = list(dictionary.values())
     
@@ -137,10 +139,9 @@ def read_file(filename):
             terms.append(line.replace("\n", "").replace("  ", ""))
     return terms
 
-
 def print_file_error(more_text=""):
     print("File name can not include special characters. " + more_text + "\n")
- 
+
 
 def main():
     while(True):
@@ -161,8 +162,8 @@ def main():
                         break
                     except SystemExit:
                         quit()
-                    except:
-                        print_file_error("Possibly no existing file with that name.")
+                    except Exception as e:
+                        print(e)
                 break
             elif load.lower() == "w":
                 while True:
@@ -200,6 +201,8 @@ def main():
         terms_and_def = list_definition(terms, savefile, err_file)
         print()
         write_to_file(savefile, terms_and_def, err_file)
+        trimfile.trim(os.path.join(OUTPUT_PATH, savefile))
+
         print()
         user_input = input("Press enter to continue. ")
         if user_input.lower() == "x":
